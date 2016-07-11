@@ -46,7 +46,7 @@ Base Retrofit& Rxjava Encapsulates the request of the tools
                     }
                 });
                 
-# download   
+# Download   
 
       RetrofitClient.getInstance(MainActivity.this).download(url,
                         new Subscriber<ResponseBody>() {
