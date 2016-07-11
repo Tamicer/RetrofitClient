@@ -3,7 +3,7 @@
 
 Base Retrofit& Rxjava Encapsulates the request of the tools
 
- — Get
+# GET
 
     RetrofitClient.getInstance(context).get("you path url"
                         ,maps, maps, new Subscriber<IpResult>() {
@@ -25,8 +25,7 @@ Base Retrofit& Rxjava Encapsulates the request of the tools
                 });
 
 
-
- — POST
+# POST
 
     RetrofitClient.getInstance(context).post("you path url"
                         ,maps, maps, new Subscriber<IpResult>() {
@@ -46,3 +45,27 @@ Base Retrofit& Rxjava Encapsulates the request of the tools
                         Toast.makeText(MainActivity.this, responseBody.toString(), Toast.LENGTH_LONG).show();
                     }
                 });
+                
+# download   
+
+      RetrofitClient.getInstance(MainActivity.this).download(url,
+                        new Subscriber<ResponseBody>() {
+                            @Override
+                            public void onCompleted() {
+
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+
+                            }
+
+                            @Override
+                            public void onNext(ResponseBody responseBody) {
+
+                                if (DownLoadManager.writeResponseBodyToDisk(MainActivity.this, responseBody)) {
+                                    Toast.makeText(MainActivity.this, "Download is sucess", Toast.LENGTH_LONG).show();
+                                }
+
+                            }
+                        });
