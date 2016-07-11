@@ -14,6 +14,8 @@ import retrofit2.http.PartMap;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
+import retrofit2.http.Streaming;
+import retrofit2.http.Url;
 import rx.Observable;
 
 /**
@@ -29,34 +31,34 @@ public interface ApiService {
     @GET("service/getIpInfo.php")
     Observable<IpResult> getData(@Query("ip") String ip);
 
-  /*  @Headers("{headers}")*/
+
     @GET("{url}")
     Observable<IpResult> executeGet(
             @Path("url") String url,
            // @Path("headers") Map<String, String> headers,
             @QueryMap Map<String, String> maps);
 
-    @Headers("{headers}")
+
     @POST("{url}")
     Observable<ResponseBody> executePost(
             @Path("url") String url,
-            @Path("headers") Map<String, String> headers,
             @QueryMap Map<String, String> maps);
 
     @Multipart
-    @Headers("{headers}")
     @POST("{url}")
     Observable<ResponseBody> upLoadFile(
             @Path("url") String url,
-            @Path("headers") Map<String, String> headers,
             @Part("image\"; filename=\"image.jpg") RequestBody avatar);
 
-    @Headers("{headers}")
     @POST("{url}")
     Call<ResponseBody> uploadFiles(
             @Path("url") String url,
             @Path("headers") Map<String, String> headers,
             @Part("filename") String description,
             @PartMap() Map<String, RequestBody> maps);
+
+    @Streaming
+    @GET
+    Observable<ResponseBody> downloadFile(@Url String fileUrl);
 
 }
