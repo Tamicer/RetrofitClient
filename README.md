@@ -46,6 +46,13 @@ Base Retrofit& Rxjava Encapsulates the request of the tools
                     }
                 });
                 
+#UpLoad
+
+            RequestBody requestFile =
+                        RequestBody.create(MediaType.parse("image/jpg"), new File(mPath));
+                RetrofitClient.getInstance(MainActivity.this).upload(url, requestFile, new Subscriber<ResponseBody>);
+                
+                
 # Download   
 
       RetrofitClient.getInstance(MainActivity.this).download(url,
