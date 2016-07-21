@@ -6,6 +6,7 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -31,24 +32,26 @@ public interface ApiService {
     @GET("service/getIpInfo.php")
     Observable<IpResult> getData(@Query("ip") String ip);
 
-
+    @Headers("{headers}")
     @GET("{url}")
     Observable<IpResult> executeGet(
             @Path("url") String url,
-           // @Path("headers") Map<String, String> headers,
-            @QueryMap Map<String, String> maps);
+            @Path("headers") Map<String, String> headers,
+            @QueryMap Map<String, String> maps
+           );
 
 
     @POST("{url}")
     Observable<ResponseBody> executePost(
             @Path("url") String url,
+          //  @Header("") String authorization,
             @QueryMap Map<String, String> maps);
 
     @Multipart
     @POST("{url}")
     Observable<ResponseBody> upLoadFile(
             @Path("url") String url,
-            @Part("image\"; filename=\"image.jpg") RequestBody avatar);
+            @Part("image\"; filename=\"image.jpg") RequestBody requestBody);
 
     @POST("{url}")
     Call<ResponseBody> uploadFiles(

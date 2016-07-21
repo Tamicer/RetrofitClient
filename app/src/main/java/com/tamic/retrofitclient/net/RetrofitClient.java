@@ -7,8 +7,12 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -99,11 +103,12 @@ public class RetrofitClient {
                 .addInterceptor(new BaseInterceptor(headers))
                 .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
                 .build();
-        retrofit = builder
+        retrofit = new Retrofit.Builder()
                 .client(okHttpClient)
                 .baseUrl(url)
                 .build();
         apiService = retrofit.create(ApiService.class);
+
     }
 
     /**
@@ -148,7 +153,7 @@ public class RetrofitClient {
     }
 
     public Subscription get(String url, Map headers, Map parameters, Subscriber<IpResult> subscriber) {
-        return apiService.executeGet(url, parameters)
+        return apiService.executeGet(url, headers, parameters)
                 .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -160,6 +165,14 @@ public class RetrofitClient {
                 .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+    }
+
+    public void upload(String url, RequestBody requestBody,Subscriber<ResponseBody> subscriber) {
+        apiService.upLoadFile(url, requestBody)
+                .subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
                 .subscribe(subscriber);
     }
 
