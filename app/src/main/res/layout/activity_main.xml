@@ -43,4 +43,11 @@
         android:layout_height="wrap_content"
         android:text="DOWN_LOAD"
         />
+
+    <Button
+        android:id="@+id/bt_my_api"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="execute MyApi"
+        />
 </LinearLayout>

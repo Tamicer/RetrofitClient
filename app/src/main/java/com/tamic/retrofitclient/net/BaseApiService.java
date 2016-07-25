@@ -1,5 +1,7 @@
 package com.tamic.retrofitclient.net;
 
+import com.tamic.retrofitclient.IpResult;
+
 import java.util.Map;
 
 import okhttp3.RequestBody;
@@ -23,7 +25,7 @@ import rx.Observable;
  * Created by Ｔａｍｉｃ on 2016-07-08.
  * {@link # https://github.com/NeglectedByBoss/RetrofitClient}
  */
-public interface ApiService {
+public interface BaseApiService {
 
     public static final String Base_URL = "http://ip.taobao.com/";
     /**
@@ -32,11 +34,10 @@ public interface ApiService {
     @GET("service/getIpInfo.php")
     Observable<IpResult> getData(@Query("ip") String ip);
 
-    @Headers("{headers}")
+
     @GET("{url}")
     Observable<IpResult> executeGet(
             @Path("url") String url,
-            @Path("headers") Map<String, String> headers,
             @QueryMap Map<String, String> maps
            );
 

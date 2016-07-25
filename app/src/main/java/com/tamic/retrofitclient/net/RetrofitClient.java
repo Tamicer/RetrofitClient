@@ -3,6 +3,8 @@ package com.tamic.retrofitclient.net;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.tamic.retrofitclient.IpResult;
+
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -10,9 +12,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -30,9 +29,9 @@ import rx.schedulers.Schedulers;
 public class RetrofitClient {
 
     private static final int DEFAULT_TIMEOUT = 5;
-    private ApiService apiService;
+    private BaseApiService apiService;
     private static OkHttpClient okHttpClient;
-    public static String baseUrl = ApiService.Base_URL;
+    public static String baseUrl = BaseApiService.Base_URL;
     private static Context mContext;
     private static RetrofitClient sNewInstance;
 
@@ -65,16 +64,15 @@ public class RetrofitClient {
         if (context != null) {
             mContext = context;
         }
-        sNewInstance = new RetrofitClient(context, url);
-        return sNewInstance;
+
+        return new RetrofitClient(context, url);
     }
 
     public static RetrofitClient getInstance(Context context, String url, Map headers) {
         if (context != null) {
             mContext = context;
         }
-        sNewInstance = new RetrofitClient(context, url, headers);
-        return sNewInstance;
+        return new RetrofitClient(context, url, headers);
     }
 
    private RetrofitClient() {
@@ -105,9 +103,10 @@ public class RetrofitClient {
                 .build();
         retrofit = new Retrofit.Builder()
                 .client(okHttpClient)
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .baseUrl(url)
                 .build();
-        apiService = retrofit.create(ApiService.class);
 
     }
 
@@ -134,6 +133,25 @@ public class RetrofitClient {
         builder.client(httpClient.build()).build();
     }
 
+    /**
+     * create BaseApi  defalte ApiManager
+     * @return ApiManager
+     */
+    public RetrofitClient createBaseApi() {
+        apiService = create(BaseApiService.class);
+        return this;
+    }
+
+    /**
+     * create BaseApiService
+     * Create an implementation of the API endpoints defined by the {@code service} interface.
+     */
+    public  <T> T create(final Class<T> service) {
+        if (service == null) {
+            throw new RuntimeException("Api service is null!");
+        }
+        return retrofit.create(service);
+    }
 
     /**
      * Create an implementation of the API endpoints defined by the {@code service} interface.
@@ -152,8 +170,8 @@ public class RetrofitClient {
                 .subscribe(subscriber);
     }
 
-    public Subscription get(String url, Map headers, Map parameters, Subscriber<IpResult> subscriber) {
-        return apiService.executeGet(url, headers, parameters)
+    public Subscription get(String url, Map parameters, Subscriber<IpResult> subscriber) {
+        return apiService.executeGet(url, parameters)
                 .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -181,6 +199,16 @@ public class RetrofitClient {
                 .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
+                .subscribe(subscriber);
+    }
+
+    /**
+     * @param subscriber
+     */
+    public void execute(Observable<Object> observable ,Subscriber<Object> subscriber) {
+        observable.subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber);
     }
 

@@ -1,4 +1,4 @@
-package com.tamic.retrofitclient.net;
+package com.tamic.retrofitclient;
 
 /**
  * Created by Tamic on 2016-06-03.

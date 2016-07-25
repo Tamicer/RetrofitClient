@@ -5,21 +5,21 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
-import com.tamic.retrofitclient.net.ApiService;
 import com.tamic.retrofitclient.net.DownLoadManager;
-import com.tamic.retrofitclient.net.IpResult;
 import com.tamic.retrofitclient.net.RetrofitClient;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import okhttp3.ResponseBody;
+import retrofit2.Retrofit;
+import rx.Observable;
 import rx.Subscriber;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    private View btn, btn_get, btn_post, btn_download, btn_upload;
+    private View btn, btn_get, btn_post, btn_download, btn_upload,btn_myApi;
 
     String url1 = "https://www.google.co.uk/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png";
     String url2 = "http://wap.dl.pinyin.sogou.com/wapdl/hole/201607/05/SogouInput_android_v8.3_sweb.apk?frm=new_pcjs_index";
@@ -36,9 +36,10 @@ public class MainActivity extends AppCompatActivity {
         btn_post = findViewById(R.id.bt_post);
         btn_download = findViewById(R.id.bt_download);
         btn_upload = findViewById(R.id.bt_upload);
+        btn_myApi = findViewById(R.id.bt_my_api);
 
         // 单独指定apiService
-       /* ApiService apiService = RetrofitClient.createService(ApiService.class);
+       /* BaseApiService apiService = RetrofitClient.createService(BaseApiService.class);
         apiService.downloadFile(url1);*/
 
 
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                 //"http://ip.taobao.com/service/getIpInfo.php?ip=21.22.11.33";
-                RetrofitClient.getInstance(MainActivity.this).getData(new Subscriber<IpResult>() {
+                RetrofitClient.getInstance(MainActivity.this).createBaseApi().getData(new Subscriber<IpResult>() {
                     @Override
                     public void onCompleted() {
 
@@ -77,8 +78,8 @@ public class MainActivity extends AppCompatActivity {
 
                 maps.put("ip", "21.22.11.33");
                 //"http://ip.taobao.com/service/getIpInfo.php?ip=21.22.11.33";
-                RetrofitClient.getInstance(MainActivity.this).get("service/getIpInfo.php"
-                        , maps, maps, new Subscriber<IpResult>() {
+                RetrofitClient.getInstance(MainActivity.this).createBaseApi().get("service/getIpInfo.php"
+                        ,  maps, new Subscriber<IpResult>() {
                     @Override
                     public void onCompleted() {
 
@@ -107,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
 
                 maps.put("ip", "21.22.11.33");
                 //"http://ip.taobao.com/service/getIpInfo.php?ip=21.22.11.33";
-                RetrofitClient.getInstance(MainActivity.this).post("service/getIpInfo.php"
+                RetrofitClient.getInstance(MainActivity.this).createBaseApi().post("service/getIpInfo.php"
                         , maps, new Subscriber<ResponseBody>() {
                     @Override
                     public void onCompleted() {
@@ -143,11 +144,11 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                RetrofitClient.getInstance(MainActivity.this).download(url1,
+                RetrofitClient.getInstance(MainActivity.this).createBaseApi().download(url2,
                         new Subscriber<ResponseBody>() {
                             @Override
                             public void onCompleted() {
-
+                                Toast.makeText(MainActivity.this, "Download is finish", Toast.LENGTH_LONG).show();
                             }
 
                             @Override
@@ -164,6 +165,33 @@ public class MainActivity extends AppCompatActivity {
 
                             }
                         });
+            }
+        });
+
+
+
+        btn_myApi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                MyApiService service = RetrofitClient.getInstance(MainActivity.this).create(MyApiService.class);
+                RetrofitClient.getInstance(MainActivity.this).execute(service.getData("21.22.11.33"), new Subscriber<Object>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onNext(Object responseBody) {
+
+                        Toast.makeText(MainActivity.this, responseBody.toString(), Toast.LENGTH_LONG).show();
+                    }
+                });
             }
         });
     }
