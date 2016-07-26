@@ -203,13 +203,24 @@ public class RetrofitClient {
     }
 
     /**
-     * @param subscriber
+     * /**
+     * execute your customer API
+     * For example:
+     *  MyApiService service =
+     *      RetrofitClient.getInstance(MainActivity.this).create(MyApiService.class);
+     *
+     *  RetrofitClient.getInstance(MainActivity.this)
+     *      .execute(service.lgon("name", "password"), subscriber)
+     *     * @param subscriber
      */
-    public void execute(Observable<Object> observable ,Subscriber<Object> subscriber) {
+
+    public static <T> T execute(Observable<T> observable ,Subscriber<T> subscriber) {
         observable.subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber);
+
+        return null;
     }
 
 }
