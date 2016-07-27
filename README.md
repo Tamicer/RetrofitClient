@@ -5,13 +5,13 @@ Base Retrofit& Rxjava Encapsulates the request of the tools
 
 # GET
 
-    RetrofitClient.getInstance(context).get("you path url"
+    RetrofitClient.getInstance(context)..createBaseApi().get("you path url"
                         ,maps, maps, new Subscriber<IpResult>());
 
 
 # POST
 
-    RetrofitClient.getInstance(context).post("you path url"
+    RetrofitClient.getInstance(context).createBaseApi().post("you path url"
                         ,maps, maps, new Subscriber<IpResult>());
                 
 #UpLoad
@@ -19,12 +19,12 @@ Base Retrofit& Rxjava Encapsulates the request of the tools
         RequestBody requestFile =
                         RequestBody.create(MediaType.parse("image/jpg"), new File(mPath));
             
-        RetrofitClient.getInstance(MainActivity.this).upload(url, requestFile, new Subscriber<ResponseBody>);
+        RetrofitClient.getInstance(MainActivity.this).createBaseApi().upload(url, requestFile, new Subscriber<ResponseBody>);
                 
                 
 # Download   
 
-      RetrofitClient.getInstance(MainActivity.this).download(url,
+      RetrofitClient.getInstance(MainActivity.this).createBaseApi().download(url,
                         new Subscriber<ResponseBody>() {
                             @Override
                             public void onCompleted() {
@@ -45,3 +45,8 @@ Base Retrofit& Rxjava Encapsulates the request of the tools
 
                             }
                         });
+
+
+ >更多介绍：http://www.jianshu.com/p/29c2a9ac5abf
+ 
+ >Author : Tamic
