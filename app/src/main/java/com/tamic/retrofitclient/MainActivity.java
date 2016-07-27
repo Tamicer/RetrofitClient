@@ -13,6 +13,7 @@ import java.util.Map;
 
 import okhttp3.ResponseBody;
 import retrofit2.Retrofit;
+import retrofit2.http.Header;
 import rx.Observable;
 import rx.Subscriber;
 
@@ -37,10 +38,6 @@ public class MainActivity extends AppCompatActivity {
         btn_download = findViewById(R.id.bt_download);
         btn_upload = findViewById(R.id.bt_upload);
         btn_myApi = findViewById(R.id.bt_my_api);
-
-        // 单独指定apiService
-       /* BaseApiService apiService = RetrofitClient.createService(BaseApiService.class);
-        apiService.downloadFile(url1);*/
 
 
         btn.setOnClickListener(new View.OnClickListener() {
@@ -174,8 +171,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                //create  you APiService
                 MyApiService service = RetrofitClient.getInstance(MainActivity.this).create(MyApiService.class);
-                RetrofitClient.getInstance(MainActivity.this).execute(service.getData("21.22.11.33"), new Subscriber<Object>() {
+
+                // execute and add observable
+                RetrofitClient.getInstance(MainActivity.this).execute(
+                        service.getData("21.22.11.33"), new Subscriber<IpResult>() {
                     @Override
                     public void onCompleted() {
 
@@ -187,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onNext(Object responseBody) {
+                    public void onNext(IpResult responseBody) {
 
                         Toast.makeText(MainActivity.this, responseBody.toString(), Toast.LENGTH_LONG).show();
                     }

@@ -1,7 +1,12 @@
 package com.tamic.retrofitclient;
 
+import java.util.Map;
+
+import okhttp3.ResponseBody;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.QueryMap;
 import rx.Observable;
 
 /**
@@ -12,5 +17,7 @@ public interface MyApiService {
      *普通写法
      */
     @GET("service/getIpInfo.php")
-    Observable<Object> getData(@Query("ip") String ip);
+    Observable<IpResult> getData(@Query("ip") String ip);
+
+
 }

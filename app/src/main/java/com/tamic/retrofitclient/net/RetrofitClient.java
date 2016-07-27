@@ -37,6 +37,7 @@ public class RetrofitClient {
 
     private static Retrofit retrofit;
 
+
     private static Retrofit.Builder builder =
             new Retrofit.Builder()
                     .addConverterFactory(GsonConverterFactory.create())
@@ -47,6 +48,7 @@ public class RetrofitClient {
                     .addNetworkInterceptor(
                             new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS))
                     .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
+
 
     private static class SingletonHolder {
         private static RetrofitClient INSTANCE = new RetrofitClient(
@@ -110,7 +112,7 @@ public class RetrofitClient {
 
     }
 
-    /**
+   /**
      * ApiBaseUrl
      *
      * @param newApiBaseUrl
@@ -120,6 +122,14 @@ public class RetrofitClient {
         builder = new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(baseUrl);
+    }
+
+    /**
+     *addcookieJar
+     */
+    public static void addCookie() {
+        okHttpClient.newBuilder().cookieJar(new NovateCookieManger(mContext)).build();
+        retrofit = builder.client(okHttpClient).build();
     }
 
     /**
@@ -143,7 +153,7 @@ public class RetrofitClient {
     }
 
     /**
-     * create BaseApiService
+     * create you ApiService
      * Create an implementation of the API endpoints defined by the {@code service} interface.
      */
     public  <T> T create(final Class<T> service) {
@@ -152,15 +162,6 @@ public class RetrofitClient {
         }
         return retrofit.create(service);
     }
-
-    /**
-     * Create an implementation of the API endpoints defined by the {@code service} interface.
-     */
-    public static <S> S createService(Class<S> serviceClass) {
-
-        return builder.client(httpClient.build()).build().create(serviceClass);
-    }
-
 
     public void getData(Subscriber<IpResult> subscriber, String ip) {
         apiService.getData(ip)
