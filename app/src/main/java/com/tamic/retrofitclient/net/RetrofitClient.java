@@ -2,6 +2,7 @@ package com.tamic.retrofitclient.net;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.tamic.retrofitclient.IpResult;
 
@@ -195,12 +196,12 @@ public class RetrofitClient {
                 .subscribe(subscriber);
     }
 
-    public void download(String url, Subscriber<ResponseBody> subscriber) {
+    public void download(String url, final CallBack callBack) {
         apiService.downloadFile(url)
                 .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .subscribe(subscriber);
+                .subscribe(new DownSubscriber<ResponseBody>(callBack));
     }
 
     /**
@@ -222,6 +223,47 @@ public class RetrofitClient {
                 .subscribe(subscriber);
 
         return null;
+    }
+
+
+    /**
+     * DownSubscriber
+     * @param <ResponseBody>
+     */
+    class DownSubscriber<ResponseBody> extends Subscriber<ResponseBody> {
+        CallBack callBack;
+
+        public DownSubscriber(CallBack callBack) {
+            this.callBack = callBack;
+        }
+
+        @Override
+        public void onStart() {
+            super.onStart();
+            if (callBack != null) {
+                callBack.onStart();
+            }
+        }
+
+        @Override
+        public void onCompleted() {
+            if (callBack != null) {
+                callBack.onCompleted();
+            }
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            if (callBack != null) {
+                callBack.onError(e);
+            }
+        }
+
+        @Override
+        public void onNext(ResponseBody responseBody) {
+            DownLoadManager.getInstance(callBack).writeResponseBodyToDisk(mContext, (okhttp3.ResponseBody) responseBody);
+
+        }
     }
 
 }

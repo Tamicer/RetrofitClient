@@ -2,9 +2,11 @@ package com.tamic.retrofitclient;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.tamic.retrofitclient.net.CallBack;
 import com.tamic.retrofitclient.net.DownLoadManager;
 import com.tamic.retrofitclient.net.RetrofitClient;
 
@@ -22,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
 
     private View btn, btn_get, btn_post, btn_download, btn_upload,btn_myApi;
 
-    String url1 = "https://www.google.co.uk/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png";
+    String url1 = "http://www.google.co.uk/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png";
     String url2 = "http://wap.dl.pinyin.sogou.com/wapdl/hole/201607/05/SogouInput_android_v8.3_sweb.apk?frm=new_pcjs_index";
 
 
@@ -76,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
                 maps.put("ip", "21.22.11.33");
                 //"http://ip.taobao.com/service/getIpInfo.php?ip=21.22.11.33";
                 RetrofitClient.getInstance(MainActivity.this).createBaseApi().get("service/getIpInfo.php"
-                        ,  maps, new Subscriber<IpResult>() {
+                        , maps, new Subscriber<IpResult>() {
                     @Override
                     public void onCompleted() {
 
@@ -141,11 +143,12 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                RetrofitClient.getInstance(MainActivity.this).createBaseApi().download(url2,
-                        new Subscriber<ResponseBody>() {
+                RetrofitClient.getInstance(MainActivity.this).createBaseApi().download(url1, new CallBack() {
+
                             @Override
-                            public void onCompleted() {
-                                Toast.makeText(MainActivity.this, "Download is finish", Toast.LENGTH_LONG).show();
+                            public void onStart() {
+                                super.onStart();
+                                Toast.makeText(MainActivity.this, url1 + "  is  star", Toast.LENGTH_SHORT).show();
                             }
 
                             @Override
@@ -154,16 +157,16 @@ public class MainActivity extends AppCompatActivity {
                             }
 
                             @Override
-                            public void onNext(ResponseBody responseBody) {
-
-                                if (DownLoadManager.writeResponseBodyToDisk(MainActivity.this, responseBody)) {
-                                    Toast.makeText(MainActivity.this, "Download is sucess", Toast.LENGTH_LONG).show();
-                                }
+                            public void onSucess(String path, String name, long fileSize) {
+                                Toast.makeText(MainActivity.this, name + " is  downLoaded", Toast.LENGTH_SHORT).show();
 
                             }
-                        });
+                        }
+                );
             }
         });
+
+
 
 
 
@@ -177,22 +180,22 @@ public class MainActivity extends AppCompatActivity {
                 // execute and add observable
                 RetrofitClient.getInstance(MainActivity.this).execute(
                         service.getData("21.22.11.33"), new Subscriber<IpResult>() {
-                    @Override
-                    public void onCompleted() {
+                            @Override
+                            public void onCompleted() {
 
-                    }
+                            }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
-                    }
+                            @Override
+                            public void onError(Throwable e) {
+                                Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                            }
 
-                    @Override
-                    public void onNext(IpResult responseBody) {
+                            @Override
+                            public void onNext(IpResult responseBody) {
 
-                        Toast.makeText(MainActivity.this, responseBody.toString(), Toast.LENGTH_LONG).show();
-                    }
-                });
+                                Toast.makeText(MainActivity.this, responseBody.toString(), Toast.LENGTH_LONG).show();
+                            }
+                        });
             }
         });
     }

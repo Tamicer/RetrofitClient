@@ -1,7 +1,9 @@
 package com.tamic.retrofitclient.net;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
+import android.view.View;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -16,6 +18,8 @@ import okhttp3.ResponseBody;
  */
 public class DownLoadManager {
 
+    private CallBack callBack;
+
     private static final String TAG = "DownLoadManager";
 
     private static String APK_CONTENTTYPE = "application/vnd.android.package-archive";
@@ -26,7 +30,25 @@ public class DownLoadManager {
 
     private static String fileSuffix="";
 
-    public static boolean  writeResponseBodyToDisk(Context context, ResponseBody body) {
+    public DownLoadManager(CallBack callBack) {
+        this.callBack = callBack;
+    }
+
+    private static DownLoadManager sInstance;
+
+    /**
+     *DownLoadManager getInstance
+     */
+    public static synchronized DownLoadManager getInstance(CallBack callBack) {
+        if (sInstance == null) {
+            sInstance = new DownLoadManager(callBack);
+        }
+        return sInstance;
+    }
+
+
+
+    public boolean  writeResponseBodyToDisk(Context context, ResponseBody body) {
 
         Log.d(TAG, "contentType:>>>>"+ body.contentType().toString());
 
@@ -41,8 +63,8 @@ public class DownLoadManager {
 
         // 其他同上 自己判断加入
 
-
-        String path = context.getExternalFilesDir(null) + File.separator + System.currentTimeMillis() + fileSuffix;
+        final String name = System.currentTimeMillis() + fileSuffix;
+        final String path = context.getExternalFilesDir(null) + File.separator + name;
 
         Log.d(TAG, "path:>>>>"+ path);
 
@@ -56,9 +78,9 @@ public class DownLoadManager {
             try {
                 byte[] fileReader = new byte[4096];
 
-                long fileSize = body.contentLength();
+                final long fileSize = body.contentLength();
                 long fileSizeDownloaded = 0;
-
+                Log.d(TAG, "file length: "+ fileSize);
                 inputStream = body.byteStream();
                 outputStream = new FileOutputStream(futureStudioIconFile);
 
@@ -74,13 +96,31 @@ public class DownLoadManager {
                     fileSizeDownloaded += read;
 
                     Log.d(TAG, "file download: " + fileSizeDownloaded + " of " + fileSize);
+                    if (callBack != null) {
+                        callBack.onProgress(fileSizeDownloaded);
+                    }
+
+
                 }
 
                 outputStream.flush();
+                Log.d(TAG, "file downloaded: " + fileSizeDownloaded + " of " + fileSize);
+                if (callBack != null) {
+                    ( (Activity)context).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            callBack.onSucess(path, name, fileSize);
+                        }
+                    });
 
+                    Log.d(TAG, "file downloaded: " + fileSizeDownloaded + " of " + fileSize);
+                }
 
                 return true;
             } catch (IOException e) {
+                if (callBack != null) {
+                    callBack.onError(e);
+                }
                 return false;
             } finally {
                 if (inputStream != null) {
@@ -92,6 +132,9 @@ public class DownLoadManager {
                 }
             }
         } catch (IOException e) {
+            if (callBack != null) {
+                callBack.onError(e);
+            }
             return false;
         }
     }
