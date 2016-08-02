@@ -26,11 +26,12 @@ Base Retrofit& Rxjava Encapsulates the request of the tools
                 
 # Download   
 
-      RetrofitClient.getInstance(MainActivity.this).createBaseApi().download(url,
-                        new Subscriber<ResponseBody>() {
-                            @Override
-                            public void onCompleted() {
+      RetrofitClient.getInstance(MainActivity.this).createBaseApi().download(url1, new CallBack() {
 
+                            @Override
+                            public void onStart() {
+                                super.onStart();
+                                Toast.makeText(MainActivity.this, url1 + "  is  star", Toast.LENGTH_SHORT).show();
                             }
 
                             @Override
@@ -39,14 +40,12 @@ Base Retrofit& Rxjava Encapsulates the request of the tools
                             }
 
                             @Override
-                            public void onNext(ResponseBody responseBody) {
-
-                                if (DownLoadManager.writeResponseBodyToDisk(MainActivity.this, responseBody)) {
-                                    Toast.makeText(MainActivity.this, "Download is sucess", Toast.LENGTH_LONG).show();
-                                }
+                            public void onSucess(String path, String name, long fileSize) {
+                                Toast.makeText(MainActivity.this, name + " is  downLoaded", Toast.LENGTH_SHORT).show();
 
                             }
-                        });
+                        }
+                );
 
 
  >更多介绍：http://www.jianshu.com/p/29c2a9ac5abf
