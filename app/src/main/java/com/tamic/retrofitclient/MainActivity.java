@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.tamic.retrofitclient.net.BaseSubscriber;
 import com.tamic.retrofitclient.net.CallBack;
 import com.tamic.retrofitclient.net.DownLoadManager;
 import com.tamic.retrofitclient.net.RetrofitClient;
@@ -48,11 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                 //"http://ip.taobao.com/service/getIpInfo.php?ip=21.22.11.33";
-                RetrofitClient.getInstance(MainActivity.this).createBaseApi().getData(new Subscriber<IpResult>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
+                RetrofitClient.getInstance(MainActivity.this).createBaseApi().getData(new BaseSubscriber<IpResult>(MainActivity.this) {
 
                     @Override
                     public void onError(Throwable e) {
@@ -78,11 +75,7 @@ public class MainActivity extends AppCompatActivity {
                 maps.put("ip", "21.22.11.33");
                 //"http://ip.taobao.com/service/getIpInfo.php?ip=21.22.11.33";
                 RetrofitClient.getInstance(MainActivity.this).createBaseApi().get("service/getIpInfo.php"
-                        , maps, new Subscriber<IpResult>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
+                        , maps, new BaseSubscriber<IpResult>(MainActivity.this) {
 
                     @Override
                     public void onError(Throwable e) {
@@ -108,11 +101,7 @@ public class MainActivity extends AppCompatActivity {
                 maps.put("ip", "21.22.11.33");
                 //"http://ip.taobao.com/service/getIpInfo.php?ip=21.22.11.33";
                 RetrofitClient.getInstance(MainActivity.this).createBaseApi().post("service/getIpInfo.php"
-                        , maps, new Subscriber<ResponseBody>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
+                        , maps, new BaseSubscriber<ResponseBody>(MainActivity.this) {
 
                     @Override
                     public void onError(Throwable e) {
@@ -131,6 +120,9 @@ public class MainActivity extends AppCompatActivity {
         btn_upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                
+                
+                //// TODO: 2016-08-03 Select your file , then RetrofitClient.getInstance(MainActivity.this).createBaseApi().upload
 
                 // ；；；；； 略
                 /**
@@ -148,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onStart() {
                                 super.onStart();
-                                Toast.makeText(MainActivity.this, url1 + "  is  star", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, url1 + "  is  start", Toast.LENGTH_SHORT).show();
                             }
 
                             @Override
@@ -179,11 +171,7 @@ public class MainActivity extends AppCompatActivity {
 
                 // execute and add observable
                 RetrofitClient.getInstance(MainActivity.this).execute(
-                        service.getData("21.22.11.33"), new Subscriber<IpResult>() {
-                            @Override
-                            public void onCompleted() {
-
-                            }
+                        service.getData("21.22.11.33"), new BaseSubscriber<IpResult>(MainActivity.this) {
 
                             @Override
                             public void onError(Throwable e) {
