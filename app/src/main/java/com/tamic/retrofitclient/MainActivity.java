@@ -25,8 +25,9 @@ public class MainActivity extends AppCompatActivity {
 
     private View btn, btn_get, btn_post, btn_download, btn_upload,btn_myApi;
 
-    String url1 = "http://www.google.co.uk/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png";
+    String url1 = "http://img0.imgtn.bdimg.com/it/u=205441424,1768829584&fm=21&gp=0.jpg";
     String url2 = "http://wap.dl.pinyin.sogou.com/wapdl/hole/201607/05/SogouInput_android_v8.3_sweb.apk?frm=new_pcjs_index";
+    String url3 = "http://apk.hiapk.com/web/api.do?qt=8051&id=723";
 
 
     @Override
@@ -135,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                RetrofitClient.getInstance(MainActivity.this).createBaseApi().download(url1, new CallBack() {
+                RetrofitClient.getInstance(MainActivity.this).createBaseApi().download(url3, new CallBack() {
 
                             @Override
                             public void onStart() {
@@ -146,6 +147,12 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onError(Throwable e) {
 
+                            }
+
+                            @Override
+                            public void onProgress(long fileSizeDownloaded) {
+                                super.onProgress(fileSizeDownloaded);
+                                Toast.makeText(MainActivity.this, " downLoadeing, download:" +  fileSizeDownloaded, Toast.LENGTH_SHORT).show();
                             }
 
                             @Override

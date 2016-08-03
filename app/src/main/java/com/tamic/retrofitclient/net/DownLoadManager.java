@@ -2,6 +2,8 @@ package com.tamic.retrofitclient.net;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 
@@ -29,6 +31,8 @@ public class DownLoadManager {
     private static String JPG_CONTENTTYPE = "image/jpg";
 
     private static String fileSuffix="";
+
+    private Handler handler;
 
     public DownLoadManager(CallBack callBack) {
         this.callBack = callBack;
@@ -59,6 +63,8 @@ public class DownLoadManager {
            fileSuffix = ".apk";
         } else if (type.equals(PNG_CONTENTTYPE)) {
             fileSuffix = ".png";
+        } else if (type.equals(JPG_CONTENTTYPE)) {
+            fileSuffix = ".jpg";
         }
 
         // 其他同上 自己判断加入
@@ -71,6 +77,10 @@ public class DownLoadManager {
         try {
             // todo change the file location/name according to your needs
             File futureStudioIconFile = new File(path);
+
+            if (futureStudioIconFile.exists()) {
+                futureStudioIconFile.delete();
+            }
 
             InputStream inputStream = null;
             OutputStream outputStream = null;
@@ -97,25 +107,32 @@ public class DownLoadManager {
 
                     Log.d(TAG, "file download: " + fileSizeDownloaded + " of " + fileSize);
                     if (callBack != null) {
-                        callBack.onProgress(fileSizeDownloaded);
+                        handler = new Handler(Looper.getMainLooper());
+                        final long finalFileSizeDownloaded = fileSizeDownloaded;
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                callBack.onProgress(finalFileSizeDownloaded);
+                            }
+                        });
+
                     }
-
-
                 }
 
                 outputStream.flush();
                 Log.d(TAG, "file downloaded: " + fileSizeDownloaded + " of " + fileSize);
                 if (callBack != null) {
-                    ( (Activity)context).runOnUiThread(new Runnable() {
+                    handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
                         @Override
                         public void run() {
                             callBack.onSucess(path, name, fileSize);
+
                         }
                     });
-
                     Log.d(TAG, "file downloaded: " + fileSizeDownloaded + " of " + fileSize);
                 }
-
+                
                 return true;
             } catch (IOException e) {
                 if (callBack != null) {
