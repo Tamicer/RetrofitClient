@@ -47,7 +47,29 @@ Base Retrofit& Rxjava Encapsulates the request of the tools
                         }
                 );
 
+# Execute you APIService    
 
+        //create  you APiService    
+         MyApiService service = RetrofitClient.getInstance(MainActivity.this).create(MyApiService.class);    
+       // execute and add observable    
+       RetrofitClient.getInstance(MainActivity.this).execute(            
+                                  service.getData("21.22.11.33"), new Subscriber<IpResult>() {                                     
+
+                         @Override                
+                          public void onCompleted() {               
+                          } 
+                          @Override                
+                          public void onError(Throwable e) {                    
+                                 Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();                            
+                          }   
+
+                         @Override                
+                         public void onNext(IpResult responseBody) {    
+                                         Toast.makeText(MainActivity.this, responseBody.toString(),  Toast.LENGTH_LONG).show();                
+                       }             
+                   });}
+ 
+ 
  >更多介绍：http://www.jianshu.com/p/29c2a9ac5abf
  
  >Author : Tamic
