@@ -6,11 +6,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.tamic.retrofitclient.net.BaseResponse;
 import com.tamic.retrofitclient.net.BaseSubscriber;
 import com.tamic.retrofitclient.net.CallBack;
 import com.tamic.retrofitclient.net.DownLoadManager;
 import com.tamic.retrofitclient.net.RetrofitClient;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,7 +25,7 @@ import rx.Subscriber;
 
 public class MainActivity extends AppCompatActivity {
 
-    private View btn, btn_get, btn_post, btn_download, btn_upload,btn_myApi;
+    private View btn, btn_get, btn_post, btn_download, btn_upload, btn_myApi, btn_changeHostApi;
 
     String url1 = "http://img0.imgtn.bdimg.com/it/u=205441424,1768829584&fm=21&gp=0.jpg";
     String url2 = "http://wap.dl.pinyin.sogou.com/wapdl/hole/201607/05/SogouInput_android_v8.3_sweb.apk?frm=new_pcjs_index";
@@ -42,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         btn_download = findViewById(R.id.bt_download);
         btn_upload = findViewById(R.id.bt_upload);
         btn_myApi = findViewById(R.id.bt_my_api);
+        btn_changeHostApi = findViewById(R.id.bt_changeHostApi);
 
 
         btn.setOnClickListener(new View.OnClickListener() {
@@ -80,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(Throwable e) {
+                        Log.e("Lyk", e.getMessage());
                         Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                     }
 
@@ -121,8 +125,8 @@ public class MainActivity extends AppCompatActivity {
         btn_upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                
-                
+
+
                 //// TODO: 2016-08-03 Select your file , then RetrofitClient.getInstance(MainActivity.this).createBaseApi().upload
 
                 // ；；；；； 略
@@ -152,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onProgress(long fileSizeDownloaded) {
                                 super.onProgress(fileSizeDownloaded);
-                                Toast.makeText(MainActivity.this, " downLoadeing, download:" +  fileSizeDownloaded, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, " downLoadeing, download:" + fileSizeDownloaded, Toast.LENGTH_SHORT).show();
                             }
 
                             @Override
@@ -166,32 +170,65 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
-
-
         btn_myApi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 //create  you APiService
-                MyApiService service = RetrofitClient.getInstance(MainActivity.this).create(MyApiService.class);
+                MyApiService service = RetrofitClient.getInstance(MainActivity.this, "http://lbs.sougu.net.cn/").create(MyApiService.class);
 
                 // execute and add observable
                 RetrofitClient.getInstance(MainActivity.this).execute(
-                        service.getData("21.22.11.33"), new BaseSubscriber<IpResult>(MainActivity.this) {
+
+                        service.getData("21.22.11.33"), new BaseSubscriber<BaseResponse<IpResult>>(MainActivity.this) {
 
                             @Override
                             public void onError(Throwable e) {
+                                super.onError(e);
                                 Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                             }
 
                             @Override
-                            public void onNext(IpResult responseBody) {
+                            public void onNext(BaseResponse<IpResult> responseBody) {
 
-                                Toast.makeText(MainActivity.this, responseBody.toString(), Toast.LENGTH_LONG).show();
+                                if (responseBody.isOk()) {
+                                    IpResult ip = responseBody.getData();
+                                    Toast.makeText(MainActivity.this, ip.toString(), Toast.LENGTH_LONG).show();
+                                }
+
                             }
                         });
             }
         });
+
+
+        btn_changeHostApi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //create  you APiService
+                MyApiService service = RetrofitClient.getInstance(MainActivity.this, "http://lbs.sougu.net.cn/").create(MyApiService.class);
+
+                // execute and add observable to RxJava
+                RetrofitClient.getInstance(MainActivity.this, "http://lbs.sougu.net.cn/").execute(
+                        service.getSougu(), new BaseSubscriber<SouguBean>(MainActivity.this) {
+
+                            @Override
+                            public void onError(Throwable e) {
+                                super.onError(e);
+                                Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+
+                            @Override
+                            public void onNext(SouguBean souguBean) {
+
+                                Toast.makeText(MainActivity.this, souguBean.toString(), Toast.LENGTH_LONG).show();
+
+                            }
+                        });
+
+            }
+        });
     }
+
 }
