@@ -1,8 +1,8 @@
 package com.tamic.retrofitclient.net;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
-
 
 import rx.Subscriber;
 
@@ -13,10 +13,18 @@ import rx.Subscriber;
 public abstract class BaseSubscriber<T> extends Subscriber<T> {
 
     private Context context;
+    private boolean isNeedCahe;
 
     public BaseSubscriber(Context context) {
         this.context = context;
     }
+
+    @Override
+    public void onError(Throwable e) {
+        Log.e("Tamic", e.getMessage());
+        // todo error somthing
+    }
+
 
     @Override
     public void onStart() {
@@ -26,6 +34,10 @@ public abstract class BaseSubscriber<T> extends Subscriber<T> {
 
         // todo some common as show loadding  and check netWork is NetworkAvailable
         // if  NetworkAvailable no !   must to call onCompleted
+        if (!NetworkUtil.isNetworkAvailable(context)) {
+            Toast.makeText(context, "无网络，读取缓存数据", Toast.LENGTH_SHORT).show();
+            onCompleted();
+        }
 
     }
 

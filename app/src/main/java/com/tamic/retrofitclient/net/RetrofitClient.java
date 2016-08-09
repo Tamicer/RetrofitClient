@@ -2,13 +2,16 @@ package com.tamic.retrofitclient.net;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.tamic.retrofitclient.IpResult;
 
+import java.io.File;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -29,7 +32,7 @@ import rx.schedulers.Schedulers;
  */
 public class RetrofitClient {
 
-    private static final int DEFAULT_TIMEOUT = 5;
+    private static final int DEFAULT_TIMEOUT = 10;
     private BaseApiService apiService;
     private static OkHttpClient okHttpClient;
     public static String baseUrl = BaseApiService.Base_URL;
@@ -37,6 +40,9 @@ public class RetrofitClient {
     private static RetrofitClient sNewInstance;
 
     private static Retrofit retrofit;
+    private Cache cache = null;
+    private File httpCacheDirectory;
+
 
 
     private static Retrofit.Builder builder =
@@ -97,11 +103,26 @@ public class RetrofitClient {
         if (TextUtils.isEmpty(url)) {
             url = baseUrl;
         }
+
+        if ( httpCacheDirectory == null) {
+            httpCacheDirectory = new File(mContext.getCacheDir(), "tamic_cache");
+        }
+
+        try {
+            if (cache == null) {
+                cache = new Cache(httpCacheDirectory, 10 * 1024 * 1024);
+            }
+        } catch (Exception e) {
+            Log.e("OKHttp", "Could not create http cache", e);
+        }
         okHttpClient = new OkHttpClient.Builder()
                 .addNetworkInterceptor(
-                        new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS))
+                        new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                 .cookieJar(new NovateCookieManger(context))
+                .cache(cache)
                 .addInterceptor(new BaseInterceptor(headers))
+                .addInterceptor(new CaheInterceptor(context))
+                .addNetworkInterceptor(new CaheInterceptor(context))
                 .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
                 .build();
         retrofit = new Retrofit.Builder()
