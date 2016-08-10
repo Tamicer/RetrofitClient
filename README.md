@@ -71,5 +71,6 @@ Base Retrofit& Rxjava Encapsulates the request of the tools
  
  
  >更多介绍：http://www.jianshu.com/p/29c2a9ac5abf
+ >  http://blog.csdn.net/sk719887916/article/details/51958010
  
  >Author : Tamic
