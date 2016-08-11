@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
+import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -124,6 +125,8 @@ public class RetrofitClient {
                 .addInterceptor(new CaheInterceptor(context))
                 .addNetworkInterceptor(new CaheInterceptor(context))
                 .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
+                .connectionPool(new ConnectionPool(8, 15, TimeUnit.SECONDS))
+                // 这里你可以根据自己的机型设置同时连接的个数和时间，我这里8个，和每个保持时间为10s
                 .build();
         retrofit = new Retrofit.Builder()
                 .client(okHttpClient)
