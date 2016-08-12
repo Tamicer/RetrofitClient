@@ -3,6 +3,10 @@
 
 Base Retrofit& Rxjava Encapsulates the request of the tools
 
+![基于Retrofit2.0 封装的超好用的RetrofitClient](http://upload-images.jianshu.io/upload_images/2022038-71bdab0afae24005.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+**效果图**
+
 ![这里写图片描述](http://img.blog.csdn.net/20160725150118164)
 
 # GET
