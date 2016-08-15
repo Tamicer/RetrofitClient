@@ -23,6 +23,12 @@ public abstract class BaseSubscriber<T> extends Subscriber<T> {
     public void onError(Throwable e) {
         Log.e("Tamic", e.getMessage());
         // todo error somthing
+
+        if(e instanceof ExceptionHandle.ResponeThrowable){
+            onError((ExceptionHandle.ResponeThrowable)e);
+        } else {
+            onError(new ExceptionHandle.ResponeThrowable(e, ExceptionHandle.ERROR.UNKNOWN));
+        }
     }
 
 
@@ -48,5 +54,7 @@ public abstract class BaseSubscriber<T> extends Subscriber<T> {
         // todo some common as  dismiss loadding
     }
 
+
+    public abstract void onError(ExceptionHandle.ResponeThrowable e);
 
 }

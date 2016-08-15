@@ -9,18 +9,14 @@ import android.widget.Toast;
 import com.tamic.retrofitclient.net.BaseResponse;
 import com.tamic.retrofitclient.net.BaseSubscriber;
 import com.tamic.retrofitclient.net.CallBack;
-import com.tamic.retrofitclient.net.DownLoadManager;
+import com.tamic.retrofitclient.net.ExceptionHandle;
+import com.tamic.retrofitclient.net.ExceptionHandle.ResponeThrowable;
 import com.tamic.retrofitclient.net.RetrofitClient;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import okhttp3.ResponseBody;
-import retrofit2.Retrofit;
-import retrofit2.http.Header;
-import rx.Observable;
-import rx.Subscriber;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -56,8 +52,10 @@ public class MainActivity extends AppCompatActivity {
                 RetrofitClient.getInstance(MainActivity.this).createBaseApi().getData(new BaseSubscriber<IpResult>(MainActivity.this) {
 
                     @Override
-                    public void onError(Throwable e) {
-                        Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                    public void onError(ResponeThrowable e) {
+                        Log.e("Lyk", e.code + " "+ e.message);
+                        Toast.makeText(MainActivity.this, e.message, Toast.LENGTH_LONG).show();
+
                     }
 
                     @Override
@@ -78,16 +76,20 @@ public class MainActivity extends AppCompatActivity {
 
                 maps.put("ip", "21.22.11.33");
                 //"http://ip.taobao.com/service/getIpInfo.php?ip=21.22.11.33";
-                RetrofitClient.getInstance(MainActivity.this).createBaseApi().get("service/getIpInfo.php"
+               RetrofitClient.getInstance(MainActivity.this).createBaseApi().get("service/getIpInfo.php"
                         , maps, new BaseSubscriber<IpResult>(MainActivity.this) {
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e("Lyk", e.getMessage());
-                        Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
-                    }
 
-                    @Override
+                   @Override
+                   public void onError(ResponeThrowable e) {
+
+
+                           Log.e("Lyk", e.getMessage());
+                           Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+
+                   }
+
+                   @Override
                     public void onNext(IpResult responseBody) {
 
                         Toast.makeText(MainActivity.this, responseBody.toString(), Toast.LENGTH_LONG).show();
@@ -109,8 +111,10 @@ public class MainActivity extends AppCompatActivity {
                         , maps, new BaseSubscriber<ResponseBody>(MainActivity.this) {
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(ResponeThrowable e) {
+                        Log.e("Lyk", e.getMessage());
                         Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+
                     }
 
                     @Override
@@ -183,9 +187,10 @@ public class MainActivity extends AppCompatActivity {
                         service.getData("21.22.11.33"), new BaseSubscriber<BaseResponse<IpResult>>(MainActivity.this) {
 
                             @Override
-                            public void onError(Throwable e) {
-                                super.onError(e);
+                            public void onError(ResponeThrowable e) {
+                                Log.e("Lyk", e.getMessage());
                                 Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+
                             }
 
                             @Override
@@ -214,11 +219,11 @@ public class MainActivity extends AppCompatActivity {
                         service.getSougu(), new BaseSubscriber<SouguBean>(MainActivity.this) {
 
                             @Override
-                            public void onError(Throwable e) {
-                                super.onError(e);
+                            public void onError(ResponeThrowable e) {
+                                Log.e("Lyk", e.getMessage());
                                 Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
-                            }
 
+                            }
                             @Override
                             public void onNext(SouguBean souguBean) {
 
@@ -226,7 +231,6 @@ public class MainActivity extends AppCompatActivity {
 
                             }
                         });
-
             }
         });
     }

@@ -40,8 +40,7 @@ public class NetworkUtil {
     }
 
     /**
-     * 得到ip地址
-     * 
+     * getLocalIpAddress
      * @return
      */
     public static String getLocalIpAddress() {

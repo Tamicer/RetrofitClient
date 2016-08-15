@@ -32,11 +32,11 @@ public interface BaseApiService {
      *普通写法
      */
     @GET("service/getIpInfo.php")
-    Observable<IpResult> getData(@Query("ip") String ip);
+    Observable<BaseResponse<IpResult>> getData(@Query("ip") String ip);
 
 
     @GET("{url}")
-    Observable<IpResult> executeGet(
+    Observable<BaseResponse<Object>> executeGet(
             @Path("url") String url,
             @QueryMap Map<String, String> maps
            );
