@@ -33,7 +33,7 @@ import rx.schedulers.Schedulers;
  */
 public class RetrofitClient {
 
-    private static final int DEFAULT_TIMEOUT = 10;
+    private static final int DEFAULT_TIMEOUT = 20;
     private BaseApiService apiService;
     private static OkHttpClient okHttpClient;
     public static String baseUrl = BaseApiService.Base_URL;
@@ -125,6 +125,7 @@ public class RetrofitClient {
                 .addInterceptor(new CaheInterceptor(context))
                 .addNetworkInterceptor(new CaheInterceptor(context))
                 .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
+                .writeTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
                 .connectionPool(new ConnectionPool(8, 15, TimeUnit.SECONDS))
                 // 这里你可以根据自己的机型设置同时连接的个数和时间，我这里8个，和每个保持时间为10s
                 .build();
@@ -255,7 +256,6 @@ public class RetrofitClient {
 
     private static class HttpResponseFunc<T> implements Func1<Throwable, Observable<T>> {
         @Override public Observable<T> call(Throwable t) {
-
             return Observable.error(ExceptionHandle.handleException(t));
         }
     }
