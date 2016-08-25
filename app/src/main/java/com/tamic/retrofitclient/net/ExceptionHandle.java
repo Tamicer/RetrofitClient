@@ -4,6 +4,7 @@ import android.net.ParseException;
 
 import com.google.gson.JsonParseException;
 
+import org.apache.http.conn.ConnectTimeoutException;
 import org.json.JSONException;
 
 import java.net.ConnectException;
@@ -62,6 +63,10 @@ public class ExceptionHandle {
             ex = new ResponeThrowable(e, ERROR.SSL_ERROR);
             ex.message = "证书验证失败";
             return ex;
+        } else if (e instanceof ConnectTimeoutException){
+            ex = new ResponeThrowable(e, ERROR.TIMEOUT_ERROR);
+            ex.message = "连接超时";
+            return ex;
         }
         else {
             ex = new ResponeThrowable(e, ERROR.UNKNOWN);
@@ -96,6 +101,11 @@ public class ExceptionHandle {
          * 证书出错
          */
         public static final int SSL_ERROR = 1005;
+
+        /**
+         * 连接超时
+         */
+        public static final int TIMEOUT_ERROR = 1006;
     }
 
     public static class ResponeThrowable extends Exception {
