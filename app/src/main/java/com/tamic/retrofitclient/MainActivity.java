@@ -179,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 //create  you APiService
-                MyApiService service = RetrofitClient.getInstance(MainActivity.this, "http://lbs.sougu.net.cn/").create(MyApiService.class);
+                MyApiService service = RetrofitClient.getInstance(MainActivity.this, "http://ip.taobao.com/").create(MyApiService.class);
 
                 // execute and add observable
                 RetrofitClient.getInstance(MainActivity.this).execute(
