@@ -48,13 +48,13 @@
         android:id="@+id/bt_my_api"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="execute MyApi"
+        android:text="execute MyApi1"
         />
 
     <Button
         android:id="@+id/bt_changeHostApi"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="execute MyApi"
+        android:text="execute MyApi2"
         />
 </LinearLayout>
