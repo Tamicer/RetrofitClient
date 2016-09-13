@@ -191,7 +191,7 @@ public class RetrofitClient {
 
     public Subscription getData(Subscriber<IpResult> subscriber, String ip) {
         return apiService.getData(ip)
-               .compose(schedulersTransformer)
+               .compose(schedulersTransformer())
                 .compose(transformer())
                 .subscribe(subscriber);
     }
@@ -199,42 +199,54 @@ public class RetrofitClient {
     public Subscription get(String url, Map parameters, Subscriber<IpResult> subscriber) {
 
         return apiService.executeGet(url, parameters)
-                .compose(schedulersTransformer)
+                .compose(schedulersTransformer())
                 .compose(transformer())
                 .subscribe(subscriber);
     }
 
     public void post(String url, Map<String, String> parameters, Subscriber<ResponseBody> subscriber) {
         apiService.executePost(url, parameters)
-                .compose(schedulersTransformer)
+                .compose(schedulersTransformer())
                 .compose(transformer())
                 .subscribe(subscriber);
     }
 
     public void upload(String url, RequestBody requestBody,Subscriber<ResponseBody> subscriber) {
         apiService.upLoadFile(url, requestBody)
-                .compose(schedulersTransformer)
+                .compose(schedulersTransformer())
                 .compose(transformer())
                 .subscribe(subscriber);
     }
 
     public void download(String url, final CallBack callBack) {
         apiService.downloadFile(url)
-                .compose(schedulersTransformer)
+                .compose(schedulersTransformer())
                 .compose(transformer())
                 .subscribe(new DownSubscriber<ResponseBody>(callBack));
     }
 
-    final Observable.Transformer schedulersTransformer = new  Observable.Transformer() {
-        @Override public Object call(Object observable) {
-            return ((Observable)  observable).subscribeOn(Schedulers.io())
-                    .unsubscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread());
-        }
-    };
+    Observable.Transformer schedulersTransformer() {
+        return new Observable.Transformer() {
+
+
+            @Override
+            public Object call(Object observable) {
+                return ((Observable)  observable).subscribeOn(Schedulers.io())
+                        .unsubscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread());
+            }
+
+           /* @Override
+            public Observable call(Observable observable) {
+                return observable.subscribeOn(Schedulers.io())
+                        .unsubscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread());
+            }*/
+        };
+    }
 
     <T> Observable.Transformer<T, T> applySchedulers() {
-        return (Observable.Transformer<T, T>) schedulersTransformer;
+        return (Observable.Transformer<T, T>) schedulersTransformer();
     }
 
     public <T> Observable.Transformer<BaseResponse<T>, T> transformer() {
