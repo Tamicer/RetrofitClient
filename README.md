@@ -80,3 +80,7 @@ Base Retrofit& Rxjava Encapsulates the request of the tools
  >http://blog.csdn.net/sk719887916/article/details/51958010
  
  >Author : Tamic
+ 
+ **推荐使用：**
+ 
+   Novate:https://github.com/NeglectedByBoss/Novate
