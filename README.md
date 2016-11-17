@@ -19,6 +19,15 @@ Base Retrofit& Rxjava Encapsulates the request of the tools
 
     RetrofitClient.getInstance(context).createBaseApi().post("you path url"
                         ,maps, maps, new Subscriber<IpResult>());
+# JSON
+
+     
+       RequestBody jsonbody = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), new Gson().toJson(user));
+    
+         RetrofitClient.getInstance(MainActivity.this).createBaseApi().json("url", jsonBody, new BaseSubscriber<T>(context) {
+    
+      }
+                     
                 
 #UpLoad
 
