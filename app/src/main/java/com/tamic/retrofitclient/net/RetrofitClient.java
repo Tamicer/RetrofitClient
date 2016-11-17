@@ -19,6 +19,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.Body;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -206,6 +207,14 @@ public class RetrofitClient {
 
     public void post(String url, Map<String, String> parameters, Subscriber<ResponseBody> subscriber) {
         apiService.executePost(url, parameters)
+                .compose(schedulersTransformer())
+                .compose(transformer())
+                .subscribe(subscriber);
+    }
+
+    public Subscription json(String url, RequestBody jsonStr, Subscriber<IpResult> subscriber) {
+
+        return apiService.json(url, jsonStr)
                 .compose(schedulersTransformer())
                 .compose(transformer())
                 .subscribe(subscriber);

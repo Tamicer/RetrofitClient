@@ -7,6 +7,7 @@ import java.util.Map;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
@@ -47,6 +48,11 @@ public interface BaseApiService {
             @Path("url") String url,
           //  @Header("") String authorization,
             @QueryMap Map<String, String> maps);
+
+    @POST("{url}")
+    Observable<ResponseBody> json(
+            @Path("url") String url,
+            @Body RequestBody jsonStr);
 
     @Multipart
     @POST("{url}")

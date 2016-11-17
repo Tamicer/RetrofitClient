@@ -30,6 +30,13 @@
         android:layout_height="wrap_content"
         android:text="POST"
         />
+
+    <Button
+        android:id="@+id/bt_json"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="JSON"
+        />
     <Button
         android:id="@+id/bt_upload"
         android:layout_width="fill_parent"

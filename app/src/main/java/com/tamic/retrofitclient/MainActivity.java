@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.tamic.retrofitclient.net.BaseResponse;
 import com.tamic.retrofitclient.net.BaseSubscriber;
 import com.tamic.retrofitclient.net.CallBack;
@@ -16,12 +17,13 @@ import com.tamic.retrofitclient.net.RetrofitClient;
 import java.util.HashMap;
 import java.util.Map;
 
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    private View btn, btn_get, btn_post, btn_download, btn_upload, btn_myApi, btn_changeHostApi;
+    private View btn, btn_get, btn_post, btn_json, btn_download, btn_upload, btn_myApi, btn_changeHostApi;
 
     String url1 = "http://img0.imgtn.bdimg.com/it/u=205441424,1768829584&fm=21&gp=0.jpg";
     String url2 = "http://wap.dl.pinyin.sogou.com/wapdl/hole/201607/05/SogouInput_android_v8.3_sweb.apk?frm=new_pcjs_index";
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
         btn_get = findViewById(R.id.bt_get);
         btn_post = findViewById(R.id.bt_post);
+        btn_json = findViewById(R.id.bt_json);
         btn_download = findViewById(R.id.bt_download);
         btn_upload = findViewById(R.id.bt_upload);
         btn_myApi = findViewById(R.id.bt_my_api);
@@ -53,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(ResponeThrowable e) {
-                        Log.e("Lyk", e.code + " "+ e.message);
+                        Log.e("Lyk", e.code + " " + e.message);
                         Toast.makeText(MainActivity.this, e.message, Toast.LENGTH_LONG).show();
 
                     }
@@ -73,28 +76,28 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 Map<String, String> maps = new HashMap<String, String>();
-
                 maps.put("ip", "21.22.11.33");
+
                 //"http://ip.taobao.com/service/getIpInfo.php?ip=21.22.11.33";
-               RetrofitClient.getInstance(MainActivity.this).createBaseApi().get("service/getIpInfo.php"
+                RetrofitClient.getInstance(MainActivity.this).createBaseApi().get("service/getIpInfo.php"
                         , maps, new BaseSubscriber<IpResult>(MainActivity.this) {
 
 
-                   @Override
-                   public void onError(ResponeThrowable e) {
+                            @Override
+                            public void onError(ResponeThrowable e) {
 
 
-                           Log.e("Lyk", e.getMessage());
-                           Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                                Log.e("Lyk", e.getMessage());
+                                Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
 
-                   }
+                            }
 
-                   @Override
-                    public void onNext(IpResult responseBody) {
+                            @Override
+                            public void onNext(IpResult responseBody) {
 
-                        Toast.makeText(MainActivity.this, responseBody.toString(), Toast.LENGTH_LONG).show();
-                    }
-                });
+                                Toast.makeText(MainActivity.this, responseBody.toString(), Toast.LENGTH_LONG).show();
+                            }
+                        });
             }
         });
 
@@ -110,21 +113,54 @@ public class MainActivity extends AppCompatActivity {
                 RetrofitClient.getInstance(MainActivity.this).createBaseApi().post("service/getIpInfo.php"
                         , maps, new BaseSubscriber<ResponseBody>(MainActivity.this) {
 
-                    @Override
-                    public void onError(ResponeThrowable e) {
-                        Log.e("Lyk", e.getMessage());
-                        Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                            @Override
+                            public void onError(ResponeThrowable e) {
+                                Log.e("Lyk", e.getMessage());
+                                Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
 
-                    }
+                            }
 
-                    @Override
-                    public void onNext(ResponseBody responseBody) {
-                        Toast.makeText(MainActivity.this, responseBody.toString(), Toast.LENGTH_LONG).show();
-                    }
-                });
+                            @Override
+                            public void onNext(ResponseBody responseBody) {
+                                Toast.makeText(MainActivity.this, responseBody.toString(), Toast.LENGTH_LONG).show();
+                            }
+                        });
             }
         });
 
+        btn_json.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Map<String, String> maps = new HashMap<String, String>();
+
+                maps.put("ip", "21.22.11.33");
+                //"http://ip.taobao.com/service/getIpInfo.php?ip=21.22.11.33";
+
+                RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), new Gson().toJson(maps));
+
+                RetrofitClient.getInstance(MainActivity.this).createBaseApi().json("service/getIpInfo.php"
+                        , body, new BaseSubscriber<IpResult>(MainActivity.this) {
+
+
+                            @Override
+                            public void onError(ResponeThrowable e) {
+
+
+                                Log.e("Lyk", e.getMessage());
+                                Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+
+                            }
+
+                            @Override
+                            public void onNext(IpResult responseBody) {
+
+                                Toast.makeText(MainActivity.this, responseBody.toString(), Toast.LENGTH_LONG).show();
+                            }
+                        });
+
+            }
+        });
 
         btn_upload.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -224,6 +260,7 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
 
                             }
+
                             @Override
                             public void onNext(SouguBean souguBean) {
 
