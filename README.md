@@ -91,4 +91,4 @@ Base Retrofit& Rxjava Encapsulates the request of the tools
  
  **推荐使用：**
  
-   Novate:https://github.com/NeglectedByBoss/Novate
+   Novate: https://github.com/Tamicer/Novate
