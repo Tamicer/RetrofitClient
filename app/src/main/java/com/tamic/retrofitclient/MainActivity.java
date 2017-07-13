@@ -10,7 +10,6 @@ import com.google.gson.Gson;
 import com.tamic.retrofitclient.net.BaseResponse;
 import com.tamic.retrofitclient.net.BaseSubscriber;
 import com.tamic.retrofitclient.net.CallBack;
-import com.tamic.retrofitclient.net.ExceptionHandle;
 import com.tamic.retrofitclient.net.ExceptionHandle.ResponeThrowable;
 import com.tamic.retrofitclient.net.RetrofitClient;
 
@@ -21,6 +20,9 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 
 
+/**
+ * Created by Tamic on 2016-06-15.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private View btn, btn_get, btn_post, btn_json, btn_download, btn_upload, btn_myApi, btn_changeHostApi;
@@ -49,23 +51,23 @@ public class MainActivity extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
                 //"http://ip.taobao.com/service/getIpInfo.php?ip=21.22.11.33";
-                RetrofitClient.getInstance(MainActivity.this).createBaseApi().getData(new BaseSubscriber<IpResult>(MainActivity.this) {
+                RetrofitClient.getInstance(MainActivity.this)
+                        .createBaseApi()
+                        .getData("21.22.11.33")
+                        .subscribe(new BaseSubscriber<IpResult>(MainActivity.this) {
 
-                    @Override
-                    public void onError(ResponeThrowable e) {
-                        Log.e("Lyk", e.code + " " + e.message);
-                        Toast.makeText(MainActivity.this, e.message, Toast.LENGTH_LONG).show();
+                            @Override
+                            public void onError(ResponeThrowable e) {
+                                Log.e("Lyk", e.code + " " + e.message);
+                                Toast.makeText(MainActivity.this, e.message, Toast.LENGTH_LONG).show();
+                            }
 
-                    }
-
-                    @Override
-                    public void onNext(IpResult responseBody) {
-                        Toast.makeText(MainActivity.this, responseBody.toString(), Toast.LENGTH_LONG).show();
-                    }
-                }, "21.22.11.33");
+                            @Override
+                            public void onNext(IpResult responseBody) {
+                                Toast.makeText(MainActivity.this, responseBody.toString(), Toast.LENGTH_LONG).show();
+                            }
+                        });
 
             }
         });
@@ -79,25 +81,21 @@ public class MainActivity extends AppCompatActivity {
                 maps.put("ip", "21.22.11.33");
 
                 //"http://ip.taobao.com/service/getIpInfo.php?ip=21.22.11.33";
-                RetrofitClient.getInstance(MainActivity.this).createBaseApi().get("service/getIpInfo.php"
-                        , maps, new BaseSubscriber<IpResult>(MainActivity.this) {
-
-
+                RetrofitClient.getInstance(MainActivity.this)
+                        .createBaseApi()
+                        .get("service/getIpInfo.php", maps)
+                        .subscribe(new BaseSubscriber<ResponseBody>(MainActivity.this) {
                             @Override
                             public void onError(ResponeThrowable e) {
-
-
-                                Log.e("Lyk", e.getMessage());
                                 Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
-
                             }
 
                             @Override
-                            public void onNext(IpResult responseBody) {
-
+                            public void onNext(ResponseBody responseBody) {
                                 Toast.makeText(MainActivity.this, responseBody.toString(), Toast.LENGTH_LONG).show();
                             }
                         });
+                ;
             }
         });
 
@@ -110,9 +108,10 @@ public class MainActivity extends AppCompatActivity {
 
                 maps.put("ip", "21.22.11.33");
                 //"http://ip.taobao.com/service/getIpInfo.php?ip=21.22.11.33";
-                RetrofitClient.getInstance(MainActivity.this).createBaseApi().post("service/getIpInfo.php"
-                        , maps, new BaseSubscriber<ResponseBody>(MainActivity.this) {
-
+                RetrofitClient.getInstance(MainActivity.this)
+                        .createBaseApi()
+                        .post("service/getIpInfo.php", maps)
+                        .subscribe(new BaseSubscriber<ResponseBody>(MainActivity.this) {
                             @Override
                             public void onError(ResponeThrowable e) {
                                 Log.e("Lyk", e.getMessage());
@@ -139,14 +138,14 @@ public class MainActivity extends AppCompatActivity {
 
                 RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), new Gson().toJson(maps));
 
-                RetrofitClient.getInstance(MainActivity.this).createBaseApi().json("service/getIpInfo.php"
-                        , body, new BaseSubscriber<IpResult>(MainActivity.this) {
+                RetrofitClient.getInstance(MainActivity.this)
+                        .createBaseApi()
+                        .json("service/getIpInfo.php", body)
+                        .subscribe(new BaseSubscriber<IpResult>(MainActivity.this) {
 
 
                             @Override
                             public void onError(ResponeThrowable e) {
-
-
                                 Log.e("Lyk", e.getMessage());
                                 Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
 
@@ -158,6 +157,7 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.makeText(MainActivity.this, responseBody.toString(), Toast.LENGTH_LONG).show();
                             }
                         });
+
 
             }
         });
@@ -180,7 +180,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                RetrofitClient.getInstance(MainActivity.this).createBaseApi().download(url3, new CallBack() {
+                RetrofitClient.getInstance(MainActivity.this)
+                        .createBaseApi().download(url3, new CallBack() {
 
                             @Override
                             public void onStart() {
@@ -218,9 +219,9 @@ public class MainActivity extends AppCompatActivity {
                 MyApiService service = RetrofitClient.getInstance(MainActivity.this, "http://ip.taobao.com/").create(MyApiService.class);
 
                 // execute and add observable
-                RetrofitClient.getInstance(MainActivity.this).execute(
-
-                        service.getData("21.22.11.33"), new BaseSubscriber<BaseResponse<IpResult>>(MainActivity.this) {
+                RetrofitClient.getInstance(MainActivity.this)
+                        .switchSchedulersIo(service.getData("21.22.11.33"))
+                        .subscribe(new BaseSubscriber<BaseResponse<IpResult>>(MainActivity.this) {
 
                             @Override
                             public void onError(ResponeThrowable e) {
@@ -251,8 +252,9 @@ public class MainActivity extends AppCompatActivity {
                 MyApiService service = RetrofitClient.getInstance(MainActivity.this, "http://lbs.sougu.net.cn/").create(MyApiService.class);
 
                 // execute and add observable to RxJava
-                RetrofitClient.getInstance(MainActivity.this, "http://lbs.sougu.net.cn/").execute(
-                        service.getSougu(), new BaseSubscriber<SouguBean>(MainActivity.this) {
+                RetrofitClient.getInstance(MainActivity.this, "http://lbs.sougu.net.cn/")
+                        .switchSchedulersIo(service.getSougu())
+                        .subscribe(new BaseSubscriber<SouguBean>(MainActivity.this) {
 
                             @Override
                             public void onError(ResponeThrowable e) {

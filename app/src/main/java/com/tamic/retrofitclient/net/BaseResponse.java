@@ -4,6 +4,7 @@ package com.tamic.retrofitclient.net;
 /**
  * 网络返回基类 支持泛型
  * Created by Tamic on 2016-06-06.
+ * {@link # https://github.com/Tamicer/RetrofitClient}
  */
 public class BaseResponse<T> {
 
