@@ -1,7 +1,7 @@
 # RetrofitClient
-基于Retrofit和Rxjava封装的请求工具类 
+基于Retrofit2和Rxjava2封装的请求工具类 
 
-Base Retrofit& Rxjava Encapsulates the request of the tools
+Base Retrofi2t& Rxjava2 Encapsulates the request of the tools
 
 ![基于Retrofit2.0 封装的超好用的RetrofitClient](http://upload-images.jianshu.io/upload_images/2022038-71bdab0afae24005.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
@@ -10,22 +10,28 @@ Base Retrofit& Rxjava Encapsulates the request of the tools
 
 # GET
 
-    RetrofitClient.getInstance(context)..createBaseApi().get("you path url"
-                        ,maps, maps, new Subscriber<IpResult>());
+     RetrofitClient.getInstance(MainActivity.this)
+                        .createBaseApi()
+                        .get("url", maps)
+                        .subscribe(new BaseSubscriber<T>(context) {});
 
 
 # POST
 
-    RetrofitClient.getInstance(context).createBaseApi().post("you path url"
-                        ,maps, maps, new Subscriber<IpResult>());
+     RetrofitClient.getInstance(MainActivity.this)
+                        .createBaseApi()
+                        .post("url", maps)
+                        .subscribe( new BaseSubscriber<T>(context) {});
 # JSON
 
      
-       RequestBody jsonbody = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), new Gson().toJson(user));
+       RequestBody jsonbody = 
+       RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), new Gson().toJson(user));
     
-         RetrofitClient.getInstance(MainActivity.this).createBaseApi().json("url", jsonBody, new BaseSubscriber<T>(context) {
-    
-      }
+       RetrofitClient.getInstance(MainActivity.this)
+                      .createBaseApi()
+                      .json("url", jsonBody)
+                      .subscribe( new BaseSubscriber<T>(context) {});
                      
                 
 #UpLoad
@@ -33,53 +39,49 @@ Base Retrofit& Rxjava Encapsulates the request of the tools
         RequestBody requestFile =
                         RequestBody.create(MediaType.parse("image/jpg"), new File(mPath));
             
-        RetrofitClient.getInstance(MainActivity.this).createBaseApi().upload(url, requestFile, new Subscriber<ResponseBody>);
+        RetrofitClient.getInstance(MainActivity.this)
+                       .createBaseApi()
+                       .upload(url, requestFile)
+                       .subscribe(new BaseSubscriber<T>(context) {
+                        });
                 
                 
 # Download   
 
-      RetrofitClient.getInstance(MainActivity.this).createBaseApi().download(url1, new CallBack() {
+      RetrofitClient.getInstance(MainActivity.this)
+      .createBaseApi()
+      .download(url1, new CallBack() {
 
-                            @Override
-                            public void onStart() {
-                                super.onStart();
-                                Toast.makeText(MainActivity.this, url1 + "  is  star", Toast.LENGTH_SHORT).show();
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-
-                            }
-
-                            @Override
-                            public void onSucess(String path, String name, long fileSize) {
-                                Toast.makeText(MainActivity.this, name + " is  downLoaded", Toast.LENGTH_SHORT).show();
-
-                            }
-                        }
+                          
                 );
 
 # Execute you APIService    
 
-        //create  you APiService    
-         MyApiService service = RetrofitClient.getInstance(MainActivity.this).create(MyApiService.class);    
-       // execute and add observable    
-       RetrofitClient.getInstance(MainActivity.this).execute(            
-                                  service.getData("21.22.11.33"), new Subscriber<IpResult>() {                                     
+##  MyApiService
 
-                         @Override                
-                          public void onCompleted() {               
-                          } 
-                          @Override                
-                          public void onError(Throwable e) {                    
-                                 Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();                            
-                          }   
+```
+public interface MyApiService {
+  
+    @GET("service/getIpInfo.php")
+    Flowable<BaseResponse<IpResult>> getData(@Query("ip") String ip);
+}
+```
+    
+    
+## create  you APiService
+                
+                //create  you APiService
+                MyApiService service = RetrofitClient.getInstance().create(MyApiService.class);
 
-                         @Override                
-                         public void onNext(IpResult responseBody) {    
-                                         Toast.makeText(MainActivity.this, responseBody.toString(),  Toast.LENGTH_LONG).show();                
-                       }             
-                   });}
+## Call
+
+                // execute and add observable
+                RetrofitClient.getInstance(MainActivity.this)
+                        .switchSchedulersMain(service.getData("21.22.11.33"))
+                        .subscribe(new BaseSubscriber<BaseResponse<IpResult>>(MainActivity.this) {
+
+                            });
+        
  
  
  >更多介绍：http://www.jianshu.com/p/29c2a9ac5abf
