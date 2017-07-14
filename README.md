@@ -93,7 +93,7 @@ public interface MyApiService {
   
   
   ```
-        RetrofitClient.getInstance(MainActivity.this)
+  RetrofitClient.getInstance(MainActivity.this)
                         .createBaseApi()
                         .get("service/getIpInfo.php", maps)
                         .compose(new FlowableTransformer() {
@@ -109,7 +109,7 @@ public interface MyApiService {
                             }
                         }).
                                         
-      ```                  
+ ```                  
  
  >http://blog.csdn.net/sk719887916/article/details/51958010
  
