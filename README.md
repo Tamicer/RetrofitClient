@@ -84,8 +84,28 @@ public interface MyApiService {
         
  
  
- >更多介绍：http://www.jianshu.com/p/29c2a9ac5abf
- >  
+ 
+ 
+ 
+ # More 
+ 
+  支持RxJAVA操作符：
+  
+           RetrofitClient.getInstance(MainActivity.this)
+                        .createBaseApi()
+                        .get("service/getIpInfo.php", maps)
+                        .compose(new FlowableTransformer() {
+                            @Override
+                            public Publisher apply(@NonNull Flowable upstream) {
+                                return null;
+                            }
+                        })
+                        .map(new Function() {
+                            @Override
+                            public Object apply(@NonNull Object o) throws Exception {
+                                return null;
+                            }
+                        })... 
  
  >http://blog.csdn.net/sk719887916/article/details/51958010
  
