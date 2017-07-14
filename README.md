@@ -10,20 +10,27 @@ Base Retrofit& Rxjava Encapsulates the request of the tools
 
 # GET
 
-    RetrofitClient.getInstance(context)..createBaseApi().get("you path url"
+    RetrofitClient.getInstance(context)
+                  .createBaseApi()
+                  .get("you path url"
                         ,maps, maps, new Subscriber<IpResult>());
 
 
 # POST
 
-    RetrofitClient.getInstance(context).createBaseApi().post("you path url"
+    RetrofitClient.getInstance(context)
+                 .createBaseApi(
+                  ).post("you path url"
                         ,maps, maps, new Subscriber<IpResult>());
 # JSON
 
      
-       RequestBody jsonbody = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), new Gson().toJson(user));
+       RequestBody jsonbody = 
+               RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), new Gson().toJson(user));
     
-         RetrofitClient.getInstance(MainActivity.this).createBaseApi().json("url", jsonBody, new BaseSubscriber<T>(context) {
+         RetrofitClient.getInstance(MainActivity.this)
+             .createBaseApi()
+             .json("url", jsonBody, new BaseSubscriber<T>(context) {
     
       }
                      
@@ -33,31 +40,16 @@ Base Retrofit& Rxjava Encapsulates the request of the tools
         RequestBody requestFile =
                         RequestBody.create(MediaType.parse("image/jpg"), new File(mPath));
             
-        RetrofitClient.getInstance(MainActivity.this).createBaseApi().upload(url, requestFile, new Subscriber<ResponseBody>);
+        RetrofitClient.getInstance(MainActivity.this)
+                  .createBaseApi()
+                   .upload(url, requestFile, new Subscriber<ResponseBody>);
                 
                 
 # Download   
 
-      RetrofitClient.getInstance(MainActivity.this).createBaseApi().download(url1, new CallBack() {
-
-                            @Override
-                            public void onStart() {
-                                super.onStart();
-                                Toast.makeText(MainActivity.this, url1 + "  is  star", Toast.LENGTH_SHORT).show();
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-
-                            }
-
-                            @Override
-                            public void onSucess(String path, String name, long fileSize) {
-                                Toast.makeText(MainActivity.this, name + " is  downLoaded", Toast.LENGTH_SHORT).show();
-
-                            }
-                        }
-                );
+      RetrofitClient.getInstance(MainActivity.this)
+                     .createBaseApi()
+                     .download(url1, new CallBack());
 
 # Execute you APIService    
 
@@ -67,18 +59,7 @@ Base Retrofit& Rxjava Encapsulates the request of the tools
        RetrofitClient.getInstance(MainActivity.this).execute(            
                                   service.getData("21.22.11.33"), new Subscriber<IpResult>() {                                     
 
-                         @Override                
-                          public void onCompleted() {               
-                          } 
-                          @Override                
-                          public void onError(Throwable e) {                    
-                                 Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();                            
-                          }   
-
-                         @Override                
-                         public void onNext(IpResult responseBody) {    
-                                         Toast.makeText(MainActivity.this, responseBody.toString(),  Toast.LENGTH_LONG).show();                
-                       }             
+                       
                    });}
  
  
