@@ -55,17 +55,17 @@ public class MainActivity extends AppCompatActivity {
                 RetrofitClient.getInstance(MainActivity.this)
                         .createBaseApi()
                         .getData("21.22.11.33")
-                        .subscribe(new BaseSubscriber<IpResult>(MainActivity.this) {
+                        .subscribe(new BaseSubscriber<BaseResponse<IpResult>>(MainActivity.this) {
+
+                            @Override
+                            public void onNext(BaseResponse<IpResult> ipResultBaseResponse) {
+                                Toast.makeText(MainActivity.this, ipResultBaseResponse.toString(), Toast.LENGTH_LONG).show();
+                            }
 
                             @Override
                             public void onError(ResponeThrowable e) {
                                 Log.e("Lyk", e.code + " " + e.message);
                                 Toast.makeText(MainActivity.this, e.message, Toast.LENGTH_LONG).show();
-                            }
-
-                            @Override
-                            public void onNext(IpResult responseBody) {
-                                Toast.makeText(MainActivity.this, responseBody.toString(), Toast.LENGTH_LONG).show();
                             }
                         });
 
@@ -92,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
                             @Override
                             public void onNext(ResponseBody responseBody) {
+                                Log.e("Tamic", responseBody.toString());
                                 Toast.makeText(MainActivity.this, responseBody.toString(), Toast.LENGTH_LONG).show();
                             }
                         });
@@ -114,13 +115,14 @@ public class MainActivity extends AppCompatActivity {
                         .subscribe(new BaseSubscriber<ResponseBody>(MainActivity.this) {
                             @Override
                             public void onError(ResponeThrowable e) {
-                                Log.e("Lyk", e.getMessage());
+                                Log.e("Tamic", e.getMessage());
                                 Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
 
                             }
 
                             @Override
                             public void onNext(ResponseBody responseBody) {
+                                Log.e("Tamic", responseBody.toString());
                                 Toast.makeText(MainActivity.this, responseBody.toString(), Toast.LENGTH_LONG).show();
                             }
                         });
@@ -181,7 +183,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 RetrofitClient.getInstance(MainActivity.this)
-                        .createBaseApi().download(url3, new CallBack() {
+                        .createBaseApi()
+                        .download(url2, new CallBack() {
 
                             @Override
                             public void onStart() {
@@ -220,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
 
                 // execute and add observable
                 RetrofitClient.getInstance(MainActivity.this)
-                        .switchSchedulersIo(service.getData("21.22.11.33"))
+                        .switchSchedulersMain(service.getData("21.22.11.33"))
                         .subscribe(new BaseSubscriber<BaseResponse<IpResult>>(MainActivity.this) {
 
                             @Override
@@ -234,8 +237,15 @@ public class MainActivity extends AppCompatActivity {
                             public void onNext(BaseResponse<IpResult> responseBody) {
 
                                 if (responseBody.isOk()) {
+
                                     IpResult ip = responseBody.getData();
-                                    Toast.makeText(MainActivity.this, ip.toString(), Toast.LENGTH_LONG).show();
+                                    if (ip != null) {
+                                        Toast.makeText(MainActivity.this, ip.toString(), Toast.LENGTH_LONG).show();
+                                    } else {
+                                        Toast.makeText(MainActivity.this, "无数据", Toast.LENGTH_LONG).show();
+                                    }
+
+
                                 }
 
                             }
@@ -249,11 +259,14 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 //create  you APiService
-                MyApiService service = RetrofitClient.getInstance(MainActivity.this, "http://lbs.sougu.net.cn/").create(MyApiService.class);
+                MyApiService service =
+                        RetrofitClient
+                                .getInstance(MainActivity.this, "http://lbs.sougu.net.cn/")
+                                .create(MyApiService.class);
 
                 // execute and add observable to RxJava
                 RetrofitClient.getInstance(MainActivity.this, "http://lbs.sougu.net.cn/")
-                        .switchSchedulersIo(service.getSougu())
+                        .switchSchedulersMain(service.getSougu())
                         .subscribe(new BaseSubscriber<SouguBean>(MainActivity.this) {
 
                             @Override

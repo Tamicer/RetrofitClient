@@ -16,11 +16,13 @@ import okhttp3.Response;
  * caheInterceptor
  * Created by Tamic on 2016-08-09.
  */
-public class CaheInterceptor implements Interceptor {
+public class CacheInterceptor implements Interceptor {
 
     private Context context;
+    //set cahe times is 3 days
+    int maxStale = 60 * 60 * 24 * 3;
 
-    public CaheInterceptor(Context context) {
+    public CacheInterceptor(Context context) {
         this.context = context;
     }
 
@@ -32,7 +34,7 @@ public class CaheInterceptor implements Interceptor {
             // read from cache for 60 s
             int maxAge = 60;
             String cacheControl = request.cacheControl().toString();
-            Log.e("Tamic", "60s load cahe" + cacheControl);
+            Log.d("Tamic", "60s load cahe" + cacheControl);
             return response.newBuilder()
                     .removeHeader("Pragma")
                     .removeHeader("Cache-Control")
@@ -45,13 +47,11 @@ public class CaheInterceptor implements Interceptor {
                     Toast.makeText(context, "当前无网络! 为你智能加载缓存", Toast.LENGTH_SHORT).show();
                 }
             });
-            Log.e("Tamic", " no network load cahe");
+            Log.d("Tamic", " no network load cahe");
             request = request.newBuilder()
                     .cacheControl(CacheControl.FORCE_CACHE)
                     .build();
             Response response = chain.proceed(request);
-            //set cahe times is 3 days
-            int maxStale = 60 * 60 * 24 * 3;
             return response.newBuilder()
                     .removeHeader("Pragma")
                     .removeHeader("Cache-Control")

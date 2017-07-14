@@ -1,5 +1,6 @@
 package com.tamic.retrofitclient.net;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
@@ -14,16 +15,21 @@ import io.reactivex.subscribers.DisposableSubscriber;
 public abstract class BaseSubscriber<T> extends DisposableSubscriber<T> {
 
     private Context context;
+    private ProgressDialog progress;
 
     public BaseSubscriber(Context context) {
         this.context = context;
+        progress = new ProgressDialog(context);
+        progress.setMessage("novate拼命加载中....");
     }
 
     @Override
     public void onError(Throwable e) {
         Log.e("Tamic", e.getMessage());
         // todo error somthing
-
+        if (progress != null && progress.isShowing()) {
+            progress.dismiss();
+        }
         if(e instanceof ExceptionHandle.ResponeThrowable){
             onError((ExceptionHandle.ResponeThrowable)e);
         } else {
@@ -33,6 +39,9 @@ public abstract class BaseSubscriber<T> extends DisposableSubscriber<T> {
 
     @Override
     public void onComplete() {
+        if (progress != null && progress.isShowing()) {
+            progress.dismiss();
+        }
         Toast.makeText(context, "http is Complete", Toast.LENGTH_SHORT).show();
     }
 
@@ -47,6 +56,13 @@ public abstract class BaseSubscriber<T> extends DisposableSubscriber<T> {
             Toast.makeText(context, "无网络，读取缓存数据", Toast.LENGTH_SHORT).show();
             onComplete();
         }
+
+       if (progress != null){
+           if (progress.isShowing()) {
+               progress.dismiss();
+           }
+           progress.show();
+       }
     }
 
 

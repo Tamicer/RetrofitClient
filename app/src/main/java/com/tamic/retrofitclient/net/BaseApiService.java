@@ -27,7 +27,6 @@ import retrofit2.http.Url;
  */
 public interface BaseApiService {
 
-    public static final String Base_URL = "http://ip.taobao.com/";
     /**
      *普通写法
      */
@@ -45,7 +44,6 @@ public interface BaseApiService {
     @POST()
     Flowable<ResponseBody> post(
             @Url String url,
-          //  @Header("") String authorization,
             @FieldMap Map<String, String> maps);
 
     @POST()
@@ -64,7 +62,7 @@ public interface BaseApiService {
             @Url String url,
             @Path("headers") Map<String, String> headers,
             @Part("filename") String description,
-            @PartMap() Map<String, RequestBody> maps);
+            @PartMap Map<String, RequestBody> maps);
 
     @Streaming
     @GET

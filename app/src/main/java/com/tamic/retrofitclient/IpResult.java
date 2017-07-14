@@ -5,6 +5,22 @@ package com.tamic.retrofitclient;
  */
 public class IpResult {
 
+    /**
+     * country : 美国
+     * country_id : US
+     * area :
+     * area_id :
+     * region :
+     * region_id :
+     * city :
+     * city_id :
+     * county :
+     * county_id :
+     * isp :
+     * isp_id :
+     * ip : 21.22.11.33
+     */
+
     private String country;
     private String country_id;
     private String area;

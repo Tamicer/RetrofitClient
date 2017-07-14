@@ -9,7 +9,8 @@ import org.json.JSONException;
 
 import java.net.ConnectException;
 
-import retrofit2.adapter.rxjava.HttpException;
+import retrofit2.HttpException;
+
 
 /**
  * Created by Tamic on 2016-08-12.

@@ -1,11 +1,9 @@
 package com.tamic.retrofitclient.net;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.view.View;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -17,6 +15,7 @@ import okhttp3.ResponseBody;
 
 /**
  * Created by Tamic on 2016-07-11.
+ * https://github.com/Tamicer/RetrofitClient
  */
 public class DownLoadManager {
 

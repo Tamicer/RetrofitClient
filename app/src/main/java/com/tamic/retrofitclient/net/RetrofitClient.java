@@ -26,7 +26,7 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
@@ -39,7 +39,8 @@ public class RetrofitClient {
     private static final int DEFAULT_TIMEOUT = 20;
     private BaseApiService apiService;
     private static OkHttpClient okHttpClient;
-    public static String baseUrl = BaseApiService.Base_URL;
+    public static final String Base_URL = "http://ip.taobao.com/";
+    public static String baseUrl = Base_URL;
     private static Context mContext;
     private static RetrofitClient sNewInstance;
 
@@ -49,7 +50,7 @@ public class RetrofitClient {
     private static Retrofit.Builder builder =
             new Retrofit.Builder()
                     .addConverterFactory(GsonConverterFactory.create())
-                    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .baseUrl(baseUrl);
 
     private static OkHttpClient.Builder httpClient =
@@ -121,21 +122,22 @@ public class RetrofitClient {
         okHttpClient = new OkHttpClient.Builder()
                 .addNetworkInterceptor(
                         new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-                .cookieJar(new NovateCookieManger(context))
+                //.cookieJar(new NovateCookieManger(context))
                 .cache(cache)
                 .addInterceptor(new BaseInterceptor(headers))
-                .addInterceptor(new CaheInterceptor(context))
-                .addNetworkInterceptor(new CaheInterceptor(context))
+                .addInterceptor(new CacheInterceptor(context))
+                .addInterceptor(new AddCookiesInterceptor(context, "ch"))
+                .addInterceptor(new ReceivedCookiesInterceptor(context))
+                .addNetworkInterceptor(new CacheInterceptor(context))
                 .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
                 .writeTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
                 .readTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
                 .connectionPool(new ConnectionPool(8, 15, TimeUnit.SECONDS))
-                // 这里你可以根据自己的机型设置同时连接的个数和时间，我这里8个，和每个保持时间为10s
                 .build();
         retrofit = new Retrofit.Builder()
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .baseUrl(url)
                 .build();
 
@@ -227,12 +229,23 @@ public class RetrofitClient {
 
     public void download(String url, final CallBack callBack) {
         apiService.downloadFile(url)
-                .compose(schedulersTransformer())
+                .compose(schedulersTransformernewThread())
                 .compose(transformer())
                 .subscribe(new DownSubscriber<ResponseBody>(callBack));
     }
 
     FlowableTransformer schedulersTransformer() {
+        return new FlowableTransformer() {
+            @Override
+            public Publisher apply(@NonNull Flowable upstream) {
+                return upstream.subscribeOn(Schedulers.io())
+                        .unsubscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread());
+            }
+        };
+    }
+
+    FlowableTransformer schedulersTransformernewThread() {
         return new FlowableTransformer() {
             @Override
             public Publisher apply(@NonNull Flowable upstream) {
@@ -253,7 +266,7 @@ public class RetrofitClient {
         return new FlowableTransformer() {
             @Override
             public Publisher apply(@NonNull Flowable upstream) {
-                return upstream.map((Function) new HandleFuc<T>()).onErrorResumeNext((Publisher) new HttpResponseFunc<T>());
+                return upstream.map(new HandleFuc<T>()).onErrorResumeNext(new HttpResponseFunc<T>());
             }
 
            /* @Override
