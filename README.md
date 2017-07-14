@@ -91,8 +91,9 @@ public interface MyApiService {
  
   支持RxJAVA操作符：
   
+  
   ```
-           RetrofitClient.getInstance(MainActivity.this)
+        RetrofitClient.getInstance(MainActivity.this)
                         .createBaseApi()
                         .get("service/getIpInfo.php", maps)
                         .compose(new FlowableTransformer() {
@@ -106,9 +107,8 @@ public interface MyApiService {
                             public Object apply(@NonNull Object o) throws Exception {
                                 return null;
                             }
-                        })... 
-                        
-                        
+                        }).
+                                        
       ```                  
  
  >http://blog.csdn.net/sk719887916/article/details/51958010
