@@ -1,7 +1,7 @@
 # RetrofitClient
 基于Retrofit2和Rxjava2封装的请求工具类 
 
-Base Retrofi2t& Rxjava2 Encapsulates the request of the tools
+Base Retrofit2 & Rxjava2 Encapsulates the request of the tools
 
 ![基于Retrofit2.0 封装的超好用的RetrofitClient](http://upload-images.jianshu.io/upload_images/2022038-71bdab0afae24005.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
@@ -26,7 +26,7 @@ Base Retrofi2t& Rxjava2 Encapsulates the request of the tools
 
      
        RequestBody jsonbody = 
-       RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), new Gson().toJson(user));
+                   RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), new Gson().toJson(user));
     
        RetrofitClient.getInstance(MainActivity.this)
                       .createBaseApi()
@@ -34,7 +34,7 @@ Base Retrofi2t& Rxjava2 Encapsulates the request of the tools
                       .subscribe( new BaseSubscriber<T>(context) {});
                      
                 
-#UpLoad
+# UpLoad
 
         RequestBody requestFile =
                         RequestBody.create(MediaType.parse("image/jpg"), new File(mPath));
@@ -55,7 +55,7 @@ Base Retrofi2t& Rxjava2 Encapsulates the request of the tools
                           
                 );
 
-# Execute you APIService    
+# Execute you ApiService    
 
 ##  MyApiService
 
