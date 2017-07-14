@@ -87,10 +87,11 @@ public interface MyApiService {
  
  
  
- # More 
+ # More Rxjava
  
   支持RxJAVA操作符：
   
+  ```
            RetrofitClient.getInstance(MainActivity.this)
                         .createBaseApi()
                         .get("service/getIpInfo.php", maps)
@@ -106,6 +107,9 @@ public interface MyApiService {
                                 return null;
                             }
                         })... 
+                        
+                        
+      ```                  
  
  >http://blog.csdn.net/sk719887916/article/details/51958010
  
